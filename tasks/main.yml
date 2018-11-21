@@ -11,6 +11,12 @@
 - include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
+- name: start rabbitmq server
+  service:
+    name: rabbitmq-server
+    enabled: True
+    state: started
+
 - name: remove rabbitmq virtual hosts
   rabbitmq_vhost:
     name: "{{ item }}"
