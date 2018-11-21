@@ -63,3 +63,13 @@
     name: "{{ rabbitmq_daemon }}"
     state: "{{ rabbitmq_state }}"
     enabled: "{{ rabbitmq_enabled }}"
+
+- name: add rabbitmq cluster hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ hostvars[item].rabbitmq_nodename | default(hostvars[item].ansible_hostname) }}"
+  with_items: "{{ rabbitmq_cluster_hosts }}"
+  when: rabbitmq_cluster
+
+- include: cluster.yml
+  when: rabbitmq_cluster and (rabbitmq_nodename != rabbitmq_cluster_master)
