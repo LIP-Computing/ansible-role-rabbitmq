@@ -14,8 +14,8 @@
 - name: start rabbitmq server
   service:
     name: rabbitmq-server
-    enabled: True
-    state: started
+    enabled: yes
+    state: restarted
 
 - name: remove rabbitmq virtual hosts
   rabbitmq_vhost:
