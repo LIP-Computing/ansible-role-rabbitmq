@@ -6,31 +6,59 @@ Installs RabbitMQ on Linux.
 
 ## Requirements
 
-(Red Hat / CentOS only) Requires the EPEL repository, which can be installed with the `geerlingguy.repo-epel` role.
+(Red Hat / CentOS only) Requires the EPEL repository, which can be installed
+with the `geerlingguy.repo-epel` role. 
 
 ## Role Variables
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
+Controls the RabbitMQ daemon's state and whether it starts at boot.
+
     rabbitmq_daemon: rabbitmq-server
     rabbitmq_state: started
     rabbitmq_enabled: true
 
-Controls the RabbitMQ daemon's state and whether it starts at boot.
+The RabbitMQ version install is the one in already provided repositories.
 
-    rabbitmq_version: "3.6.16"
-
-The RabbitMQ version to install.
-
-    rabbitmq_rpm: "rabbitmq-server-{{ rabbitmq_version }}-1.el{{ ansible_distribution_major_version }}.noarch.rpm"
-    rabbitmq_rpm_url: "https://packagecloud.io/rabbitmq/rabbitmq-server/packages/el/{{ ansible_distribution_major_version }}/{{ rabbitmq_rpm }}/download"
-
-(RedHat/CentOS only) Controls the .rpm to install.
+(Debian/Ubuntu only) Controls the .deb to install.
 
     rabbitmq_deb: "rabbitmq-server_{{ rabbitmq_version }}-1_all.deb"
     rabbitmq_deb_url: "https://packagecloud.io/rabbitmq/rabbitmq-server/packages/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}/{{ rabbitmq_deb }}/download"
 
-(Debian/Ubuntu only) Controls the .deb to install.
+You can enable clustering (*work in progress*), setting this variable to true.
+
+    rabbitmq_cluster: false
+
+If you set `rabbitmq_cluster: true`, set the erlang cookie so it's the sam over all
+member of the cluster.
+
+    rabbitmq_erlang_cookie: "set_your_cockie_here"
+
+This is the full path name to the erlang cookie file.
+
+    rabbitmq_erlang_cookie_file: /var/lib/rabbitmq/.erlang.cookie 
+
+List of users to create, and set password.
+
+    rabbitmq_users:
+      - user: admin
+        password: set_admin_password
+        tags: administrator
+
+List of user to remove
+
+    rabbitmq_users_absent:
+      - guest
+
+List of `vhosts` to create
+
+    rabbitmq_vhosts: []
+
+List of `vhosts` to remove
+
+    rabbitmq_vhosts_absent: []
+
 
 ## Dependencies
 

@@ -11,6 +11,47 @@
 - include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
+- name: remove rabbitmq virtual hosts
+  rabbitmq_vhost:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ rabbitmq_vhosts_absent }}"
+
+- name: add rabbitmq virtual hosts
+  rabbitmq_vhost:
+    name: "{{ item.name | default(item) }}"
+    node: "{{ item.node | default('rabbit') }}"
+    state: present
+    tracing: "{{ item.tracing | default(False) }}"
+  with_items: "{{ rabbitmq_vhosts }}"
+
+- name: remove rabbitmq users
+  rabbitmq_user:
+    user: "{{ item }}"
+    state: absent
+  with_items: "{{ rabbitmq_users_absent }}"
+
+- name: add rabbitmq users
+  rabbitmq_user:
+    user: "{{ item.user }}"
+    password: "{{ item.password }}"
+    vhost: "{{ item.vhost | default('/') }}"
+    configure_priv: "{{ item.configure_priv | default('.*') }}"
+    read_priv: "{{ item.read_priv | default('.*') }}"
+    write_priv: "{{ item.write_priv | default('.*') }}"
+    tags: "{{ item.tags | default('') }}"
+    state: present
+  with_items: "{{ rabbitmq_users }}"
+
+- name: Set erlang cockie for cluster setup
+  template:
+    src: erlang.cookie.j2
+    dest: "{{ rabbitmq_erlang_cookie_file }}"
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0400
+  when: rabbitmq_cluster
+
 - name: Ensure rabbitmq is started and enabled (if configured).
   service:
     name: "{{ rabbitmq_daemon }}"
