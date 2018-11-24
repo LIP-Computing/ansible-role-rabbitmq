@@ -49,14 +49,13 @@
     state: present
   with_items: "{{ rabbitmq_users }}"
 
-- name: Set erlang cockie for cluster setup
+- name: Set erlang cockie
   template:
     src: erlang.cookie.j2
     dest: "{{ rabbitmq_erlang_cookie_file }}"
     owner: rabbitmq
     group: rabbitmq
     mode: 0400
-  when: rabbitmq_cluster
 
 - name: Ensure rabbitmq is started and enabled (if configured).
   service:
