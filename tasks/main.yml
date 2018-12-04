@@ -58,18 +58,26 @@
     mode: 0400
   when: rabbitmq_cluster
 
-- name: Ensure rabbitmq is started and enabled (if configured).
-  service:
-    name: "{{ rabbitmq_daemon }}"
-    state: "{{ rabbitmq_state }}"
-    enabled: "{{ rabbitmq_enabled }}"
-
 - name: add rabbitmq cluster hosts
   lineinfile:
     dest: /etc/hosts
     line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ hostvars[item].rabbitmq_nodename | default(hostvars[item].ansible_hostname) }}"
   with_items: "{{ rabbitmq_cluster_hosts }}"
   when: rabbitmq_cluster
+
+- name: Ensure rabbitmq is started and enabled (if configured).
+  service:
+    name: "{{ rabbitmq_daemon }}"
+    state: "{{ rabbitmq_state }}"
+    enabled: "{{ rabbitmq_enabled }}"
+
+- name: rabbitmqctl stop_app
+  shell: "rabbitmqctl stop_app"
+  register: rabbitmq_stop_output
+
+- name: rabbitmqctl start_app
+  shell: "rabbitmqctl start_app"
+  register: rabbitmq_start_output
 
 - include: cluster.yml
   when: rabbitmq_cluster and (rabbitmq_nodename != rabbitmq_cluster_master)
