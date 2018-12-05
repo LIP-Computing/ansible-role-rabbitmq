@@ -57,13 +57,6 @@
     group: rabbitmq
     mode: 0400
 
-- name: add rabbitmq cluster hosts
-  lineinfile:
-    dest: /etc/hosts
-    line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ hostvars[item].rabbitmq_nodename | default(hostvars[item].ansible_hostname) }}"
-  with_items: "{{ rabbitmq_cluster_hosts }}"
-  when: rabbitmq_cluster
-
 - name: Ensure rabbitmq is started and enabled (if configured).
   service:
     name: "{{ rabbitmq_daemon }}"
