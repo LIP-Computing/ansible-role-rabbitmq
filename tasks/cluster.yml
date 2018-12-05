@@ -7,7 +7,7 @@
 
 - name: join rabbitmq cluster
   shell: "rabbitmqctl join_cluster rabbit@{{ rabbitmq_cluster_master }}"
-  register: rabbitmq_output
+  register: rabbitmq_cluster
   ignore_errors: True
 
 - name: ensure rabbitmq cluster member
