@@ -11,6 +11,14 @@
 - include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
+- name: Set erlang cockie
+  template:
+    src: erlang.cookie.j2
+    dest: "{{ rabbitmq_erlang_cookie_file }}"
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0400
+
 - name: start rabbitmq server
   service:
     name: rabbitmq-server
@@ -48,14 +56,6 @@
     tags: "{{ item.tags | default('') }}"
     state: present
   with_items: "{{ rabbitmq_users }}"
-
-- name: Set erlang cockie
-  template:
-    src: erlang.cookie.j2
-    dest: "{{ rabbitmq_erlang_cookie_file }}"
-    owner: rabbitmq
-    group: rabbitmq
-    mode: 0400
 
 - name: Ensure rabbitmq is started and enabled (if configured).
   service:
