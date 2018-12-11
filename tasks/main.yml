@@ -1,8 +1,8 @@
 ---
-#- name: Ensure erlang is installed.
-#  package:
-#    name: erlang
-#    state: present
+- name: Ensure erlang is installed.
+  package:
+    name: erlang
+    state: present
 
 # Setup/install tasks.
 - include: setup-RedHat.yml
